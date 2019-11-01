@@ -52,7 +52,7 @@ public class Client {
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
             System.out.println("客户端与服务端通道-开启：" + ctx.channel().localAddress() + "channelActive");
-            String sendInfo = "www.usr.cn";
+            String sendInfo = "1234567891112131415161718192021221322425262728293031";
             System.out.println("客户端准备发送的数据包：" + sendInfo);
             ctx.writeAndFlush(Unpooled.copiedBuffer(sendInfo, CharsetUtil.UTF_8)); // 必须有flush
 
