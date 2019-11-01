@@ -17,6 +17,12 @@ public class DataController {
     return request.getParameterMap();
   }
 
+  @RequestMapping("/1.php")
+  public String phpReceiver(String data){
+    log.info("data {}",data);
+    return data;
+  }
+
   @RequestMapping("/{str}")
   public String stringAll(@PathVariable("str") String str) {
     log.info("txt {}", str);
