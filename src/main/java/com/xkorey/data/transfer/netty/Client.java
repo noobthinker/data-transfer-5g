@@ -23,7 +23,7 @@ public class Client {
           Bootstrap b = new Bootstrap();
           b.group(group) // 注册线程池
                   .channel(NioSocketChannel.class) // 使用NioSocketChannel来作为连接用的channel类
-                  .remoteAddress(new InetSocketAddress("localhost", 8585)) // 绑定连接端口和host信息
+                  .remoteAddress(new InetSocketAddress("localhost", 8787)) // 绑定连接端口和host信息
                   .handler(new ChannelInitializer<SocketChannel>() { // 绑定连接初始化器
                       @Override
                       protected void initChannel(SocketChannel ch) throws Exception {
