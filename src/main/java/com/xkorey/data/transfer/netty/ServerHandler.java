@@ -34,6 +34,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         // 第一种：接收字符串时的处理
         ByteBuf buf = (ByteBuf) msg;
         String rev = getMessage(buf);
+        ctx.writeAndFlush(rev+"?");
         System.out.println("客户端收到服务器数据:" + rev);
     }
 
