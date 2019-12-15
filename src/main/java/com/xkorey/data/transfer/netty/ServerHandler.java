@@ -1,21 +1,29 @@
 package com.xkorey.data.transfer.netty;
 
+import com.xkorey.data.transfer.service.OriginTextService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 
+@Slf4j
+@Component("nettyServerHandler")
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
+    @Autowired
+    private OriginTextService service;
 
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println(ctx.channel().localAddress().toString() + " 通道已激活！");
+        log.info("client active");
     }
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println(ctx.channel().localAddress().toString() + " 通道不活跃！");
+        log.info("client Inactive");
     }
 
     private String getMessage(ByteBuf buf) {
@@ -34,8 +42,8 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         // 第一种：接收字符串时的处理
         ByteBuf buf = (ByteBuf) msg;
         String rev = getMessage(buf);
+        service.save(rev);
         ctx.writeAndFlush(rev+"?");
-        System.out.println("客户端收到服务器数据:" + rev);
     }
 
     @Override

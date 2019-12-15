@@ -18,8 +18,8 @@ public class DataController {
   }
 
   @RequestMapping("/1.php")
-  public String phpReceiver(String data){
-    log.info("data {}",data);
+  public String phpReceiver(String data) {
+    log.info("data {}", data);
     return data;
   }
 

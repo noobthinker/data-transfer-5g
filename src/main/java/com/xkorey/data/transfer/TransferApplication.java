@@ -14,36 +14,37 @@ import javax.annotation.PostConstruct;
 @Slf4j
 public class TransferApplication {
 
-    @Autowired
-    Server server;
+  @Autowired Server server;
 
-    @Autowired
-    ReactorServer reactorServer;
+  @Autowired ReactorServer reactorServer;
 
-    @Autowired
-    VertxServer vertxServer;
+  @Autowired VertxServer vertxServer;
 
   public static void main(String[] args) {
     SpringApplication.run(TransferApplication.class, args);
   }
 
   @PostConstruct
-    void init() throws InterruptedException {
-      Thread t = new Thread(()->{
-          log.info("reactor netty start");
-          reactorServer.start();
-      });
-      Thread tt = new Thread(()->{
-          log.info("netty start");
-          try {
-              server.start();
-          } catch (InterruptedException e) {
-              e.printStackTrace();
-          }
-      });
-      t.start();
-      tt.start();
-      vertxServer.start();
-      log.info("start..");
+  void init() throws InterruptedException {
+    Thread t =
+        new Thread(
+            () -> {
+              log.info("reactor netty start");
+              reactorServer.start();
+            });
+    Thread tt =
+        new Thread(
+            () -> {
+              log.info("netty start");
+              try {
+                server.start();
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              }
+            });
+    t.start();
+    tt.start();
+    vertxServer.start();
+    log.info("start..");
   }
 }

@@ -1,16 +1,14 @@
 package com.xkorey.data.transfer.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.codec.string.StringEncoder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
@@ -18,6 +16,9 @@ import java.nio.charset.Charset;
 @Component
 @Slf4j
 public class Server {
+
+  @Qualifier("nettyServerHandler")
+  private ChannelInboundHandlerAdapter handlerAdapter;
 
   public void start() throws InterruptedException {
     EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -41,7 +42,7 @@ public class Server {
                   System.out.println("报告完毕");
 
                   ch.pipeline().addLast(new StringEncoder(Charset.forName("GBK")));
-                  ch.pipeline().addLast(new ServerHandler()); // 客户端触发操作
+                  ch.pipeline().addLast(handlerAdapter); // 客户端触发操作
                   ch.pipeline().addLast(new ByteArrayEncoder());
                 }
               });

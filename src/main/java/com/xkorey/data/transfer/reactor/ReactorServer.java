@@ -1,19 +1,20 @@
 package com.xkorey.data.transfer.reactor;
 
+import com.xkorey.data.transfer.service.OriginTextService;
 import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.asm.Advice;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.netty.DisposableServer;
-import reactor.netty.resources.ConnectionProvider;
-import reactor.netty.resources.LoopResources;
 import reactor.netty.tcp.TcpServer;
-
-import java.nio.charset.Charset;
 
 @Slf4j
 @Component
 public class ReactorServer {
+
+  @Autowired private OriginTextService service;
 
   public void start() {
     DisposableServer server =
@@ -27,6 +28,7 @@ public class ReactorServer {
                         .flatMap(
                             s -> {
                               log.info("s {}", s);
+                              service.save(s);
                               return out.sendString(Mono.just(s + "??"));
                             })
                         .log("reactor-tcp-server"))
