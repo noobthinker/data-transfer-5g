@@ -32,7 +32,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         byte[] con = new byte[buf.readableBytes()];
         buf.readBytes(con);
         try {
-            return new String(con, "UTF-8");
+            return new String(con, "GBK");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return null;
