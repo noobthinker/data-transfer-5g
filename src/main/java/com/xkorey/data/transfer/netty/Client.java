@@ -15,15 +15,16 @@ import io.netty.util.CharsetUtil;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
+import java.util.stream.IntStream;
 
 public class Client {
   public static void main(String[] args) throws InterruptedException {
       EventLoopGroup group = new NioEventLoopGroup();
       try {
           Bootstrap b = new Bootstrap();
-          b.group(group) // 注册线程池
+          b.group(group) // 注册线程池  //192.144.167.11
                   .channel(NioSocketChannel.class) // 使用NioSocketChannel来作为连接用的channel类
-                  .remoteAddress(new InetSocketAddress("localhost", 8787)) // 绑定连接端口和host信息
+                  .remoteAddress(new InetSocketAddress("localhost", 8585)) // 绑定连接端口和host信息
                   .handler(new ChannelInitializer<SocketChannel>() { // 绑定连接初始化器
                       @Override
                       protected void initChannel(SocketChannel ch) throws Exception {
@@ -52,9 +53,17 @@ public class Client {
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
             System.out.println("客户端与服务端通道-开启：" + ctx.channel().localAddress() + "channelActive");
-            String sendInfo = "1234567891112131415161718192021221322425262728293031";
-            System.out.println("客户端准备发送的数据包：" + sendInfo);
-            ctx.writeAndFlush(Unpooled.copiedBuffer(sendInfo, CharsetUtil.UTF_8)); // 必须有flush
+            String sendInfo = "87端口中文测试";
+            IntStream.range(0,10).forEach(i->{
+                try {
+                    Thread.sleep(1000*10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("客户端准备发送的数据包：" + sendInfo+i);
+                ctx.writeAndFlush(Unpooled.copiedBuffer(sendInfo+i, CharsetUtil.UTF_8)); // 必须有flush
+            });
+
 
         }
 

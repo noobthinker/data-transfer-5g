@@ -4,6 +4,7 @@ import com.xkorey.data.transfer.service.OriginTextService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 
 @Slf4j
 @Component("nettyServerHandler")
+@ChannelHandler.Sharable
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Autowired

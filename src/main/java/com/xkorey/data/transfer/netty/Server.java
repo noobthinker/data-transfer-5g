@@ -8,6 +8,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.codec.string.StringEncoder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,7 @@ import java.nio.charset.Charset;
 @Slf4j
 public class Server {
 
+  @Autowired
   @Qualifier("nettyServerHandler")
   private ChannelInboundHandlerAdapter handlerAdapter;
 
@@ -48,10 +50,10 @@ public class Server {
               });
       ChannelFuture cf = sb.bind().sync(); // 服务器异步创建绑定
       System.out.println(Server.class + " 启动正在监听： " + cf.channel().localAddress());
-      cf.channel().closeFuture().sync(); // 关闭服务器通道
+//      cf.channel().closeFuture().sync(); // 关闭服务器通道
     } finally {
-      group.shutdownGracefully().sync(); // 释放线程池资源
-      bossGroup.shutdownGracefully().sync();
+//      group.shutdownGracefully().sync(); // 释放线程池资源
+//      bossGroup.shutdownGracefully().sync();
     }
   }
 }

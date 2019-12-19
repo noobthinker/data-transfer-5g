@@ -26,7 +26,7 @@
             <!--<totalSizeCap>1GB</totalSizeCap>-->
         </rollingPolicy>
         <encoder>
-            <charset>UTF-8</charset>
+            <charset>UTF-8</charset>rm
             <pattern>%d [%thread] %-5level %logger{36} %line - %msg%n</pattern>
         </encoder>
     </appender>
