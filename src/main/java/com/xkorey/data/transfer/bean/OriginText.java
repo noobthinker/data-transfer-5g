@@ -12,4 +12,10 @@ public class OriginText {
   @Id private String id;
   private String txt;
   private Date createdTime;
+  private Float momentQuality,
+      accumulateQuality,
+      momentVolume,
+      accumulateVolume,
+      density,
+      temperature;
 }

@@ -23,6 +23,8 @@ public class OriginTextServiceImpl implements OriginTextService {
   @Transactional
   public void save(OriginText text) {
     log.info("text {}", text);
+    text.setId(snowflake.nextIdStr());
+    text.setCreatedTime(new Date());
     textDao.save(text);
   }
 
