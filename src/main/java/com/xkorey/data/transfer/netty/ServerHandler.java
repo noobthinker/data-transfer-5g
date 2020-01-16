@@ -46,12 +46,18 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     try {
       List<String> hexList = hexNumbers(con);
       List<Float> numbers = new ArrayList<>();
+      int addr = 0;
       for (String fs : hexList) {
+        if(fs.length()==2){
+          addr = Integer.parseInt(fs,16);
+          continue;
+        }
         Long i = Long.parseLong(fs, 16);
         Float f = Float.intBitsToFloat(i.intValue());
         numbers.add(f);
       }
       int i=0;
+      text.setAddress(addr);
       text.setMomentQuality(numbers.get(i++));
       text.setAccumulateQuality(numbers.get(i++));
       text.setMomentVolume(numbers.get(i++));
@@ -130,10 +136,12 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     log.info("hex string {}", hexStr);
     List<String> result = new ArrayList<>();
     final String subStr = StringUtils.remove(hexStr, " ");
+    result.add(hexStr.substring(0,2));
     int step = 8;
     int begin = 6;
     IntStream.range(0, 6)
         .forEach(i -> result.add(subStr.substring(begin + i * step, begin + (i + 1) * step)));
     return result;
   }
+
 }
