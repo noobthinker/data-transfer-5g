@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @Entity
-public class OriginText {
+public class OriginText{
   @Id private String id;
   private String txt;
   private Date createdTime;

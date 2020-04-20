@@ -1,5 +1,6 @@
 package com.xkorey.data.transfer;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.xkorey.data.transfer.netty.Server;
 import com.xkorey.data.transfer.reactor.ReactorServer;
 import com.xkorey.data.transfer.vertx.VertxServer;
@@ -26,25 +27,10 @@ public class TransferApplication {
 
   @PostConstruct
   void init() throws InterruptedException {
-    Thread t =
-        new Thread(
-            () -> {
-              log.info("reactor netty start");
-              reactorServer.start();
-            });
-    Thread tt =
-        new Thread(
-            () -> {
-              log.info("netty start");
-              try {
-                server.start();
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              }
-            });
-    t.start();
-    tt.start();
-    vertxServer.start();
+      ThreadUtil.execute(()->{
+          log.info("netty start");
+          server.start();
+      });
     log.info("start..");
   }
 }

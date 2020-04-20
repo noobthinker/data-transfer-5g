@@ -1,10 +1,9 @@
 package com.xkorey.data.transfer.netty;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
-import com.ghgande.j2mod.modbus.msg.ReadMultipleRegistersRequest;
+import cn.hutool.core.util.HexUtil;
 import com.ghgande.j2mod.modbus.util.ModbusUtil;
-import com.xkorey.data.transfer.bean.OriginText;
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import com.xkorey.data.transfer.netty.handler.Handler;
 import com.xkorey.data.transfer.service.OriginTextService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -12,24 +11,24 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
 @Slf4j
-@Component("nettyServerHandler")
 @ChannelHandler.Sharable
+@AllArgsConstructor
+@NoArgsConstructor
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
-  @Autowired private OriginTextService service;
+  private OriginTextService service;
 
-  ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(1000, 2);
+  private Handler handler;
 
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
     log.info("client active");
@@ -39,83 +38,18 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     log.info("client Inactive");
   }
 
-  private OriginText getBean(ByteBuf buf) {
-    OriginText text = new OriginText();
+  private List<String> hexList(ByteBuf buf){
     byte[] con = new byte[buf.readableBytes()];
     buf.readBytes(con);
-    try {
-      List<String> hexList = hexNumbers(con);
-      List<Float> numbers = new ArrayList<>();
-      int addr = 0;
-      for (String fs : hexList) {
-        if(fs.length()==2){
-          addr = Integer.parseInt(fs,16);
-          continue;
-        }
-        Long i = Long.parseLong(fs, 16);
-        Float f = Float.intBitsToFloat(i.intValue());
-        numbers.add(f);
-      }
-      int i=0;
-      text.setAddress(addr);
-      text.setMomentQuality(numbers.get(i++));
-      text.setAccumulateQuality(numbers.get(i++));
-      text.setMomentVolume(numbers.get(i++));
-      text.setAccumulateVolume(numbers.get(i++));
-      text.setDensity(numbers.get(i++));
-      text.setTemperature(numbers.get(i++));
-      return text;
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-  private String getMessage(ByteBuf buf) {
-    byte[] con = new byte[buf.readableBytes()];
-    buf.readBytes(con);
-    try {
-      List<String> hexList = hexNumbers(con);
-      List<String> numbers = new ArrayList<>();
-      for (String fs : hexList) {
-        Long i = Long.parseLong(fs, 16);
-        Float f = Float.intBitsToFloat(i.intValue());
-        numbers.add(f.toString());
-      }
-      if (CollectionUtil.isNotEmpty(numbers)) {
-        return CollUtil.join(numbers, ",");
-      }
-      return StringUtils.join(new String(con, "GBK"));
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-      return null;
-    }
+    return hexNumbers(con);
   }
 
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     // 第一种：接收字符串时的处理
     ByteBuf buf = (ByteBuf) msg;
-    //        ReadMultipleRegistersResponse res;
-    //        req.setUnitID(1);
-    //        req.setTransactionID(1000);
-    //        req.setHeadless(true);
-    //        BytesOutputStream byteOutputStream = new BytesOutputStream(req.getDataLength());
-    //        try {
-    //            req.writeTo(byteOutputStream);
-    //        } catch (IOException e) {
-    //            e.printStackTrace();
-    //        }
-    //        byte[] bs = byteOutputStream.toByteArray();
-    //        int[] crc = ModbusUtil.calculateCRC(bs,0,bs.length);
-    //        ByteBuffer bf = ByteBuffer.allocate(bs.length+2);
-    //        bf.put(bs);
-    //        bf.putInt(crc[1]);
-    //        bf.putInt(crc[0]);
-    OriginText bean = getBean(buf);
-//    String rev = getMessage(buf);
-//    log.info("receive {}", rev);
-    service.save(bean);
+    // 处理消息
+    handler.target(hexList(buf),service);
     ctx.writeAndFlush("success");
   }
 
@@ -133,6 +67,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
   private List<String> hexNumbers(byte[] data) {
     String hexStr = ModbusUtil.toHex(data);
+
     log.info("hex string {}", hexStr);
     List<String> result = new ArrayList<>();
     final String subStr = StringUtils.remove(hexStr, " ");

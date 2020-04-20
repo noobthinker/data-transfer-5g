@@ -1,7 +1,9 @@
 package com.xkorey.data.transfer.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
+import com.xkorey.data.transfer.bean.Origin4Text;
 import com.xkorey.data.transfer.bean.OriginText;
+import com.xkorey.data.transfer.dao.Origin4TextDao;
 import com.xkorey.data.transfer.dao.OriginTextDao;
 import com.xkorey.data.transfer.service.OriginTextService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,9 @@ public class OriginTextServiceImpl implements OriginTextService {
 
   @Autowired private Snowflake snowflake;
 
+  @Autowired
+  private Origin4TextDao origin4TextDao;
+
   @Override
   @Transactional
   public void save(OriginText text) {
@@ -26,6 +31,14 @@ public class OriginTextServiceImpl implements OriginTextService {
     text.setId(snowflake.nextIdStr());
     text.setCreatedTime(new Date());
     textDao.save(text);
+  }
+
+  @Override
+  public void save(Origin4Text text) {
+    log.info("text {}", text);
+    text.setId(snowflake.nextIdStr());
+    text.setCreatedTime(new Date());
+    origin4TextDao.save(text);
   }
 
   @Override
