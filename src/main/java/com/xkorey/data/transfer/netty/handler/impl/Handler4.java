@@ -1,13 +1,11 @@
 package com.xkorey.data.transfer.netty.handler.impl;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.HexUtil;
 import com.xkorey.data.transfer.bean.Origin4Text;
 import com.xkorey.data.transfer.netty.handler.Handler;
 import com.xkorey.data.transfer.service.OriginTextService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -16,41 +14,28 @@ public class Handler4 implements Handler {
     @Override
     public void target(List<String> hexList, OriginTextService service) {
         Origin4Text text = new Origin4Text();
-        if(CollectionUtil.isEmpty(hexList)){
-            log.error("解析错误");
-        }
-        if(CollectionUtil.isNotEmpty(hexList) && hexList.size()!=4){
-            log.error("长度不正确 {}",hexList.size());
-        }
-        String h = hexList.get(0);
-        if(2==h.length()){
-            int addr = Integer.parseInt(h, 16);
-            text.setAddress(addr);
-        }else{
-            Long i = Long.parseLong(h, 16);
+        List<Number> numbers = new ArrayList<>();
+        int addr = 0;
+        for (String fs : hexList) {
+            if (fs.length() == 2 && 0==addr) {
+                addr = Integer.parseInt(fs, 16);
+                continue;
+            }
+            if(fs.length() == 2){
+                numbers.add(Integer.parseInt(fs, 16));
+                continue;
+            }
+            Long i = Long.parseLong(fs, 16);
             Float f = Float.intBitsToFloat(i.intValue());
-            text.setF1(f);
+            numbers.add(f);
         }
-        h = hexList.get(1);
-        if(2==h.length()){
-            int addr = Integer.parseInt(h, 16);
-            text.setAddress(addr);
-        }else{
-            Long i = Long.parseLong(h, 16);
-            Float f = Float.intBitsToFloat(i.intValue());
-            text.setF2(f);
-        }
-        h = hexList.get(2);
-        if(2==h.length()){
-            int addr = Integer.parseInt(h, 16);
-            text.setAddress(addr);
-        }else{
-            String number = HexUtil.decodeHexStr(h, Charset.forName("GBK"));
-            text.setZ_number(number);
-        }
-        h = hexList.get(3);
-        int status = Integer.parseInt(h, 16);
-        text.setZ_status(status);
+//        第一个是  钻进速度  第二个是深度   第三个是桩号（0-9999）  第4个状态
+        text.setAddress(addr);
+        text.setF1(numbers.get(0).floatValue());
+        text.setF2(numbers.get(1).floatValue());
+        text.setZ_number(numbers.get(2).intValue()+"");
+        text.setZ_status(numbers.get(3).intValue());
         service.save(text);
+
     }
 }

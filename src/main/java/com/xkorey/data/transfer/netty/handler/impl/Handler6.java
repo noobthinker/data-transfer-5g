@@ -17,7 +17,7 @@ public class Handler6 implements Handler {
     List<Float> numbers = new ArrayList<>();
     int addr = 0;
     for (String fs : hexList) {
-      if (fs.length() == 2) {
+      if (fs.length() == 2 && 0==addr) {
         addr = Integer.parseInt(fs, 16);
         continue;
       }

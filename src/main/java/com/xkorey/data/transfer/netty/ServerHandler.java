@@ -3,8 +3,10 @@ package com.xkorey.data.transfer.netty;
 import cn.hutool.core.util.HexUtil;
 import com.ghgande.j2mod.modbus.util.ModbusUtil;
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import com.xkorey.data.transfer.dao.Tool;
 import com.xkorey.data.transfer.netty.handler.Handler;
 import com.xkorey.data.transfer.service.OriginTextService;
+import com.xkorey.data.transfer.util.DaoHelper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -49,7 +51,9 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     // 第一种：接收字符串时的处理
     ByteBuf buf = (ByteBuf) msg;
     // 处理消息
+//    DaoHelper.DAO.tool.set(tool);
     handler.target(hexList(buf),service);
+//    DaoHelper.DAO.tool.remove();
     ctx.writeAndFlush("success");
   }
 

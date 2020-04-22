@@ -1,6 +1,7 @@
 package com.xkorey.data.transfer.netty;
 
 import cn.hutool.core.thread.ThreadUtil;
+import com.xkorey.data.transfer.dao.Tool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
