@@ -47,20 +47,26 @@ public class OriginTextServiceImpl implements OriginTextService {
     Integer status = null;
     Number deep = null;
     Date begin = null, end = null;
-    if (null == result.get(1)) {
+    if (null == result) {
       status = text.getZ_status();
       begin = new Date();
-    }
-    if (null != result.get(3)) {
-      Number _deep = NumberUtil.parseNumber(result.get(3));
-      if (text.getF2().compareTo(_deep.floatValue()) > 0) {
-        deep = _deep;
-      }
-    } else {
       deep = result.get(3);
-    }
-    if (null != text.getZ_status() && 2 == text.getZ_status()) {
-      end = new Date();
+    } else {
+      if (null == result.get(1)) {
+        status = text.getZ_status();
+        begin = new Date();
+      }
+      if (null != result.get(3)) {
+        Number _deep = NumberUtil.parseNumber(result.get(3));
+        if (text.getF2().compareTo(_deep.floatValue()) > 0) {
+          deep = _deep;
+        }
+      } else {
+        deep = result.get(3);
+      }
+      if (null != text.getZ_status() && 2 == text.getZ_status()) {
+        end = new Date();
+      }
     }
     tool.updateData(text.getZ_number(), status, begin, end, deep);
     origin4TextDao.save(text);

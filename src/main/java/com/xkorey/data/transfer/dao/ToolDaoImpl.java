@@ -29,6 +29,10 @@ public class ToolDaoImpl implements Tool {
                     + number
                     + "'")
             .getResultList();
+    if (result.size() == 0) {
+      return null;
+    }
+
     Object[] r = (Object[]) result.get(0);
     if (StrUtil.isBlank("" + r[3])) {
       return new Tuple(r[0], r[1], r[2], r[3], r[4]);
@@ -46,7 +50,8 @@ public class ToolDaoImpl implements Tool {
       set = true;
     }
     if (null != begin) {
-      sub.add(" Sgkssj = to_date('" + DateUtil.formatDateTime(begin) + "','yyyy-mm-dd hh24:mi:ss')");
+      sub.add(
+          " Sgkssj = to_date('" + DateUtil.formatDateTime(begin) + "','yyyy-mm-dd hh24:mi:ss')");
       set = true;
     }
     if (null != end) {
