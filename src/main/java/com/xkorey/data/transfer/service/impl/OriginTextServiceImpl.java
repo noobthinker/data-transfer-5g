@@ -55,6 +55,11 @@ public class OriginTextServiceImpl implements OriginTextService {
       if (null == result.get(1)) {
         status = text.getZ_status();
         begin = new Date();
+      } else {
+        Integer zt = result.get(1);
+        if (2 != zt) {
+          status = text.getZ_status();
+        }
       }
       if (null != result.get(3)) {
         Number _deep = NumberUtil.parseNumber(result.get(3));
