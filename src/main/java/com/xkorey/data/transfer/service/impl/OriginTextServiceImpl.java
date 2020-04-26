@@ -50,7 +50,7 @@ public class OriginTextServiceImpl implements OriginTextService {
     if (null == result) {
       status = text.getZ_status();
       begin = new Date();
-      deep = result.get(3);
+      deep = text.getF2();
     } else {
       if (null == result.get(1)) {
         status = text.getZ_status();
@@ -67,7 +67,7 @@ public class OriginTextServiceImpl implements OriginTextService {
           deep = _deep;
         }
       } else {
-        deep = result.get(3);
+        deep = text.getF2();
       }
       if (null != text.getZ_status() && 2 == text.getZ_status()) {
         end = new Date();
